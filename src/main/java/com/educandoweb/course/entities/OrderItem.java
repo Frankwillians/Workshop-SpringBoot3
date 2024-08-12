@@ -18,7 +18,6 @@ public class OrderItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private OrderItemPK id = new OrderItemPK();
 
     private Integer quantity;
@@ -40,6 +39,7 @@ public class OrderItem implements Serializable {
     public void setOrder(Order order){
         id.setOrder(order);
     }
+
 
     public Product getProduct(){
         return id.getProduct();
