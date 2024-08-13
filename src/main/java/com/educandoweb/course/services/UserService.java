@@ -2,9 +2,13 @@ package com.educandoweb.course.services;
 
 import com.educandoweb.course.entities.User;
 import com.educandoweb.course.repositories.UserRepository;
+import com.educandoweb.course.services.exceptions.DatabaseException;
 import com.educandoweb.course.services.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
+import org.hibernate.boot.model.relational.Database;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +34,18 @@ public class UserService {
        return repository.save(obj);
     }
 
-    public void delete (Long id){
-        repository.deleteById(id);
+    public void delete (Long id) throws DataIntegrityViolationException {
+    try {
+        if (repository.existsById(id)){
+            repository.deleteById(id);
+        }else {
+            throw new ResourceNotFoundException(id);
+        }
+    }catch (DataIntegrityViolationException e){
+        throw new DatabaseException(e.getMessage());
     }
+    }
+
 
     @Transactional
     public User update (Long id, User obj){
